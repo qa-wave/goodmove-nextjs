@@ -58,32 +58,48 @@ async function wpFetch<T>(
 
 /** Fetch a paginated list of published posts */
 export async function getPosts(page = 1, perPage = 9): Promise<WPPost[]> {
-  return wpFetch<WPPost[]>('posts', {
-    page,
-    per_page: perPage,
-    status: 'publish',
-    _embed: 1,
-  })
+  try {
+    return await wpFetch<WPPost[]>('posts', {
+      page,
+      per_page: perPage,
+      status: 'publish',
+      _embed: 1,
+    })
+  } catch {
+    return []
+  }
 }
 
 /** Fetch a single post by slug */
 export async function getPostBySlug(slug: string): Promise<WPPost | null> {
-  const posts = await wpFetch<WPPost[]>('posts', { slug, _embed: 1 })
-  return posts[0] ?? null
+  try {
+    const posts = await wpFetch<WPPost[]>('posts', { slug, _embed: 1 })
+    return posts[0] ?? null
+  } catch {
+    return null
+  }
 }
 
 /** Fetch all post slugs (for generateStaticParams) */
 export async function getAllPostSlugs(): Promise<string[]> {
-  const posts = await wpFetch<WPPost[]>('posts', { per_page: 100, fields: 'slug' })
-  return posts.map((p) => p.slug)
+  try {
+    const posts = await wpFetch<WPPost[]>('posts', { per_page: 100, fields: 'slug' })
+    return posts.map((p) => p.slug)
+  } catch {
+    return []
+  }
 }
 
 // ─── Pages ────────────────────────────────────────────────────────────────────
 
 /** Fetch a single WP page by slug */
 export async function getPageBySlug(slug: string): Promise<WPPage | null> {
-  const pages = await wpFetch<WPPage[]>('pages', { slug, _embed: 1 })
-  return pages[0] ?? null
+  try {
+    const pages = await wpFetch<WPPage[]>('pages', { slug, _embed: 1 })
+    return pages[0] ?? null
+  } catch {
+    return null
+  }
 }
 
 // ─── Services (CPT: gm_service) ───────────────────────────────────────────────
