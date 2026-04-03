@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GOODMOVE DESIGN SYSTEM — 3 THEMES
+   Switch via data-theme attribute on <html>:
+     data-theme="default"  → Minimalist Green (light)
+     data-theme="dark"     → Bold Dark (dark)
+     data-theme="organic"  → Natural Warm (light)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+
+  /* ── Theme 1: Default / Minimalist Green ───────────────────────────── */
+  :root,
+  [data-theme="default"] {
+    /* Surfaces */
+    --background:        150 20% 98%;    /* #F7FAF8 */
+    --foreground:        0 0% 11%;       /* #1A1A1A */
+    --card:              0 0% 100%;
+    --card-foreground:   0 0% 11%;
+    --popover:           0 0% 100%;
+    --popover-foreground: 0 0% 11%;
+
+    /* Brand */
+    --primary:           149 33% 27%;   /* #2D5A3D */
+    --primary-raw:       45 90 61;      /* for glow shadow */
+    --primary-foreground: 0 0% 100%;
+    --secondary:         150 20% 93%;   /* #E8F0EB */
+    --secondary-foreground: 149 33% 27%;
+
+    /* Neutrals */
+    --muted:             150 10% 94%;
+    --muted-foreground:  0 0% 42%;      /* #6B6B6B */
+    --accent:            150 20% 93%;
+    --accent-foreground: 149 33% 27%;
+    --destructive:       0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* UI */
+    --border:            150 10% 89%;
+    --input:             150 10% 89%;
+    --ring:              149 33% 27%;
+    --radius:            0.75rem;
+
+    /* Extended brand */
+    --sage:              139 20% 50%;
+    --sage-light:        140 25% 90%;
+
+    /* Typography */
+    --font-sans:         'Inter', system-ui, sans-serif;
+    --font-display:      'Playfair Display', Georgia, serif;
+
+    color-scheme: light;
+  }
+
+  /* ── Theme 2: Bold Dark ─────────────────────────────────────────────── */
+  [data-theme="dark"] {
+    /* Surfaces */
+    --background:        0 0% 4%;        /* #0A0A0A */
+    --foreground:        0 0% 98%;
+    --card:              0 0% 8%;        /* #141414 */
+    --card-foreground:   0 0% 98%;
+    --popover:           0 0% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Brand — neon green */
+    --primary:           75 100% 62%;   /* #C8FF3C */
+    --primary-raw:       200 255 60;
+    --primary-foreground: 0 0% 4%;
+    --secondary:         0 0% 11%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Neutrals */
+    --muted:             0 0% 11%;
+    --muted-foreground:  0 0% 54%;
+    --accent:            0 0% 11%;
+    --accent-foreground: 75 100% 62%;
+    --destructive:       0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* UI */
+    --border:            0 0% 100% / 0.08;
+    --input:             0 0% 11%;
+    --ring:              75 100% 62%;
+    --radius:            1rem;
+
+    --sage:              75 80% 55%;
+    --sage-light:        75 50% 18%;
+
+    --font-sans:         'DM Sans', system-ui, sans-serif;
+    --font-display:      'Space Grotesk', system-ui, sans-serif;
+
+    color-scheme: dark;
+  }
+
+  /* ── Theme 3: Organic / Natural Warm ───────────────────────────────── */
+  [data-theme="organic"] {
+    /* Surfaces */
+    --background:        30 35% 96%;    /* #F7F3EE */
+    --foreground:        18 15% 15%;    /* #2C2420 */
+    --card:              0 0% 100%;
+    --card-foreground:   18 15% 15%;
+    --popover:           0 0% 100%;
+    --popover-foreground: 18 15% 15%;
+
+    /* Brand — terracotta */
+    --primary:           26 47% 47%;    /* #B4703C */
+    --primary-raw:       180 112 60;
+    --primary-foreground: 30 60% 97%;
+    --secondary:         30 40% 93%;    /* #F0E2D3 */
+    --secondary-foreground: 26 47% 47%;
+
+    /* Neutrals */
+    --muted:             30 20% 90%;
+    --muted-foreground:  25 12% 55%;    /* #8C7E72 */
+    --accent:            30 30% 93%;
+    --accent-foreground: 26 47% 47%;
+    --destructive:       0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* UI */
+    --border:            28 20% 86%;    /* #E2DCD5 */
+    --input:             28 20% 86%;
+    --ring:              26 47% 47%;
+    --radius:            0.875rem;
+
+    --sage:              109 13% 50%;   /* #7A8C6E */
+    --sage-light:        110 22% 88%;   /* #E4EAE0 */
+
+    --font-sans:         'Outfit', system-ui, sans-serif;
+    --font-display:      'Cormorant Garamond', Georgia, serif;
+
+    color-scheme: light;
+  }
+
+  /* ── Base resets ────────────────────────────────────────────────────── */
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  /* Override for dark theme — headings use sans in bold */
+  [data-theme="dark"] h1,
+  [data-theme="dark"] h2,
+  [data-theme="dark"] h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+}
+
+/* ═══ Utility Classes ════════════════════════════════════════════════ */
+@layer utilities {
+
+  /* Section padding */
+  .section-padding {
+    @apply px-5 py-20 md:px-8 md:py-28 lg:px-10 lg:py-32;
+  }
+
+  .section-container {
+    @apply mx-auto max-w-7xl;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--sage)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glass card */
+  .glass {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-black/40 border border-white/20;
+  }
+
+  /* Animated underline link */
+  .link-underline {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0
+      after:bg-primary after:transition-[width] after:duration-300
+      hover:after:w-full;
+  }
+
+  /* Stagger animation delays */
+  .delay-75  { animation-delay: 75ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-700 { animation-delay: 700ms; }
+
+  /* Dark theme – neon glow on primary elements */
+  [data-theme="dark"] .glow-primary {
+    box-shadow: 0 0 40px rgba(200, 255, 60, 0.2);
+  }
+}
+
+/* ═══ Fonts ══════════════════════════════════════════════════════════ */
+/* In production use next/font/google — for dev these @imports work fine */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
