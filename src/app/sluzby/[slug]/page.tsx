@@ -12,11 +12,11 @@ import { CTASection } from '@/components/sections/CTASection'
 import { getServices, getServiceBySlug } from '@/lib/wordpress'
 
 export const revalidate = 3600
+export const dynamicParams = true
 
-// ─── Generate all static paths at build time ──────────────────────────────────
+// ─── Static paths — rendered on demand with ISR (WP may be unavailable at build) ─
 export async function generateStaticParams() {
-  const services = await getServices()
-  return services.map((s) => ({ slug: s.slug }))
+  return []
 }
 
 // ─── Dynamic metadata ─────────────────────────────────────────────────────────

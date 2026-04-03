@@ -12,10 +12,11 @@ import { getPostBySlug, getAllPostSlugs } from '@/lib/wordpress'
 import { formatDate, stripHtml, truncate } from '@/lib/utils'
 
 export const revalidate = 3600
+export const dynamicParams = true
 
+// Static paths — rendered on demand with ISR (WP may be unavailable at build)
 export async function generateStaticParams() {
-  const slugs = await getAllPostSlugs()
-  return slugs.map((slug) => ({ slug }))
+  return []
 }
 
 export async function generateMetadata(
