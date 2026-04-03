@@ -36,70 +36,61 @@ async function wpFetch<T>(
   endpoint: string,
   params: Record<string, string | number> = {},
   revalidate = REVALIDATE
-): Promise<T> {
-  const url = new URL(`${BASE_URL}/${endpoint}`)
-  Object.entries(params).forEach(([key, value]) =>
-    url.searchParams.set(key, String(value))
-  )
+): Promise<T | null> {
+  try {
+    const url = new URL(`${BASE_URL}/${endpoint}`)
+    Object.entries(params).forEach(([key, value]) =>
+      url.searchParams.set(key, String(value))
+    )
 
-  const res = await fetch(url.toString(), {
-    next: { revalidate },
-    headers: { 'Content-Type': 'application/json' },
-  })
+    const res = await fetch(url.toString(), {
+      next: { revalidate },
+      headers: { 'Content-Type': 'application/json' },
+    })
 
-  if (!res.ok) {
-    throw new Error(`WordPress API error: ${res.status} ${res.statusText} — ${url}`)
+    if (!res.ok) {
+      console.warn(`WordPress API: ${res.status} ${res.statusText} — ${url}`)
+      return null
+    }
+
+    return res.json() as Promise<T>
+  } catch (err) {
+    console.warn(`WordPress API unreachable for ${endpoint}:`, err)
+    return null
   }
-
-  return res.json() as Promise<T>
 }
 
 // ─── Posts (Aktuality / Blog) ─────────────────────────────────────────────────
 
 /** Fetch a paginated list of published posts */
 export async function getPosts(page = 1, perPage = 9): Promise<WPPost[]> {
-  try {
-    return await wpFetch<WPPost[]>('posts', {
-      page,
-      per_page: perPage,
-      status: 'publish',
-      _embed: 1,
-    })
-  } catch {
-    return []
-  }
+  const posts = await wpFetch<WPPost[]>('posts', {
+    page,
+    per_page: perPage,
+    status: 'publish',
+    _embed: 1,
+  })
+  return posts ?? []
 }
 
 /** Fetch a single post by slug */
 export async function getPostBySlug(slug: string): Promise<WPPost | null> {
-  try {
-    const posts = await wpFetch<WPPost[]>('posts', { slug, _embed: 1 })
-    return posts[0] ?? null
-  } catch {
-    return null
-  }
+  const posts = await wpFetch<WPPost[]>('posts', { slug, _embed: 1 })
+  return posts?.[0] ?? null
 }
 
 /** Fetch all post slugs (for generateStaticParams) */
 export async function getAllPostSlugs(): Promise<string[]> {
-  try {
-    const posts = await wpFetch<WPPost[]>('posts', { per_page: 100, fields: 'slug' })
-    return posts.map((p) => p.slug)
-  } catch {
-    return []
-  }
+  const posts = await wpFetch<WPPost[]>('posts', { per_page: 100, fields: 'slug' })
+  return posts?.map((p) => p.slug) ?? []
 }
 
 // ─── Pages ────────────────────────────────────────────────────────────────────
 
 /** Fetch a single WP page by slug */
 export async function getPageBySlug(slug: string): Promise<WPPage | null> {
-  try {
-    const pages = await wpFetch<WPPage[]>('pages', { slug, _embed: 1 })
-    return pages[0] ?? null
-  } catch {
-    return null
-  }
+  const pages = await wpFetch<WPPage[]>('pages', { slug, _embed: 1 })
+  return pages?.[0] ?? null
 }
 
 // ─── Services (CPT: gm_service) ───────────────────────────────────────────────
@@ -111,66 +102,49 @@ export async function getPageBySlug(slug: string): Promise<WPPage | null> {
  *   register_post_type('gm_service', ['show_in_rest' => true, ...])
  */
 export async function getServices(): Promise<GMService[]> {
-  try {
-    return wpFetch<GMService[]>('gm_service', {
-      per_page: 20,
-      order: 'asc',
-      orderby: 'menu_order',
-      _embed: 1,
-    })
-  } catch {
-    // Return static fallback when WP is unavailable (dev mode)
-    return FALLBACK_SERVICES
-  }
+  const services = await wpFetch<GMService[]>('gm_service', {
+    per_page: 20,
+    order: 'asc',
+    orderby: 'menu_order',
+    _embed: 1,
+  })
+  return services ?? FALLBACK_SERVICES
 }
 
 /** Fetch a single service by slug */
 export async function getServiceBySlug(slug: string): Promise<GMService | null> {
-  try {
-    const items = await wpFetch<GMService[]>('gm_service', { slug, _embed: 1 })
-    return items[0] ?? null
-  } catch {
-    return FALLBACK_SERVICES.find((s) => s.slug === slug) ?? null
-  }
+  const items = await wpFetch<GMService[]>('gm_service', { slug, _embed: 1 })
+  return items?.[0] ?? FALLBACK_SERVICES.find((s) => s.slug === slug) ?? null
 }
 
 // ─── Team Members (CPT: gm_team) ─────────────────────────────────────────────
 
 export async function getTeamMembers(): Promise<GMTeamMember[]> {
-  try {
-    return wpFetch<GMTeamMember[]>('gm_team', {
-      per_page: 20,
-      order: 'asc',
-      orderby: 'menu_order',
-      _embed: 1,
-    })
-  } catch {
-    return FALLBACK_TEAM
-  }
+  const members = await wpFetch<GMTeamMember[]>('gm_team', {
+    per_page: 20,
+    order: 'asc',
+    orderby: 'menu_order',
+    _embed: 1,
+  })
+  return members ?? FALLBACK_TEAM
 }
 
 // ─── Testimonials (CPT: gm_testimonial) ──────────────────────────────────────
 
 export async function getTestimonials(): Promise<GMTestimonial[]> {
-  try {
-    return wpFetch<GMTestimonial[]>('gm_testimonial', { per_page: 12 })
-  } catch {
-    return FALLBACK_TESTIMONIALS
-  }
+  const testimonials = await wpFetch<GMTestimonial[]>('gm_testimonial', { per_page: 12 })
+  return testimonials ?? FALLBACK_TESTIMONIALS
 }
 
 // ─── Pricing (CPT: gm_pricing) ───────────────────────────────────────────────
 
 export async function getPricingItems(): Promise<GMPricingItem[]> {
-  try {
-    return wpFetch<GMPricingItem[]>('gm_pricing', {
-      per_page: 20,
-      order: 'asc',
-      orderby: 'menu_order',
-    })
-  } catch {
-    return FALLBACK_PRICING
-  }
+  const items = await wpFetch<GMPricingItem[]>('gm_pricing', {
+    per_page: 20,
+    order: 'asc',
+    orderby: 'menu_order',
+  })
+  return items ?? FALLBACK_PRICING
 }
 
 // ─── Contact Form (CF7) ───────────────────────────────────────────────────────
